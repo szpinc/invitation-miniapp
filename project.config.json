@@ -1,0 +1,62 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true,
+		"autoAudits": false
+	},
+	"compileType": "miniprogram",
+	"libVersion": "2.4.2",
+	"appid": "wx7facf6fca0a9d72e",
+	"projectname": "OnceLove",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 3,
+			"list": [
+				{
+					"id": -1,
+					"name": "地图",
+					"pathName": "pages/map/index",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "zhufu",
+					"pathName": "pages/bless/index",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "poster",
+					"pathName": "pages/poster/index",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "留言",
+					"pathName": "pages/chat/index"
+				}
+			]
+		}
+	}
+}
