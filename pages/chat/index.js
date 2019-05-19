@@ -1,4 +1,5 @@
 // pages/chat/index.js
+const api = require('../../utils/api.js');
 const app = getApp()
 var server = app.globalData.server;
 var appid = app.globalData.appid;
@@ -13,14 +14,22 @@ Page({
         inputValue: '',
         auth: false,
         msgSta: false,
-        signSta: false
+        signSta: false,
+        openid: null
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
-    onLoad: function(options) {
+    onLoad: function (options) {
         var that = this
+
+        let openid = wx.getStorageSync("openid")
+
+        that.setData({
+            openid: openid
+        });
+
         let userInfo = wx.getStorageSync('userInfo')
         if (userInfo) {
             this.setData({
@@ -28,44 +37,41 @@ Page({
                 userInfo: userInfo
             })
         }
-		wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
-			title: '加载中',
-			icon: 'loading',
-		});
+        wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
+            title: '加载中',
+            icon: 'loading',
+        });
         wx.request({
-            url: server,
+            url: api.chat_list,
             method: 'GET',
             data: {
-                'c': 'info',
                 'appid': appid
             },
             header: {
                 'Accept': 'application/json'
             },
-            success: function(res) {
-				wx.hideLoading();
-                console.log(res.data)
+            success: function (res) {
+                wx.hideLoading();
                 that.setData({
-                    mainInfo: res.data.mainInfo,
-                    chatList: res.data.chatList,
-                    chatNum: res.data.chatNum
+                    chatList: res.data.chat_list,
+                    chatNum: res.data.chat_num
                 });
             }
         })
     },
-    leaveMsg: function() {
+    leaveMsg: function () {
         this.setData({
             msgSta: true,
             signSta: false
         })
     },
-    signIn: function() {
+    signIn: function () {
         this.setData({
             signSta: true,
             msgSta: false
         })
     },
-    cancelMsg: function() {
+    cancelMsg: function () {
         this.setData({
             signSta: false,
             msgSta: false
@@ -106,10 +112,8 @@ Page({
         var plan = event.detail.value.plan;
         var extra = event.detail.value.extra;
         wx.request({
-            url: server,
+            url: api.attend,
             data: {
-                'c': 'sign',
-                'appid': appid,
                 'nickname': nickname,
                 'face': face,
                 'name': name,
@@ -118,11 +122,11 @@ Page({
                 'extra': extra
             },
             header: {},
-            method: "GET",
+            method: "POST",
             dataType: "json",
             success: res => {
                 // console.log(res.data);
-                if (res.data.success) {
+                if (res.data.code == 0) {
                     wx.showModal({
                         title: '提示',
                         content: '提交成功 欢迎您的到来',
@@ -143,19 +147,19 @@ Page({
     /**
      * 用户点击右上角分享
      */
-    onShareAppMessage: function() {
+    onShareAppMessage: function () {
         var that = this;
         //console.log(that.data);
         return {
-            title: that.data.mainInfo.share,
-            imageUrl: that.data.mainInfo.thumb,
+            title: app.globalData.main_info.share,
+            imageUrl: app.globalData.main_info.thumb,
             path: 'pages/index/index',
-            success: function(res) {
+            success: function (res) {
                 wx.showToast({
                     title: '分享成功',
                 })
             },
-            fail: function(res) {
+            fail: function (res) {
                 // 转发失败
                 wx.showToast({
                     title: '分享取消',
@@ -163,14 +167,13 @@ Page({
             }
         }
     },
-    bindKeyInput: function(e) {
+    bindKeyInput: function (e) {
         this.setData({
             inputValue: e.detail.value
         })
 
     },
-    bindgetuserinfo: function(e) {
-        console.log(e.detail.userInfo)
+    bindgetuserinfo: function (e) {
         var that = this;
         if (e.detail.userInfo) {
             wx.setStorageSync('userInfo', e.detail.userInfo)
@@ -178,8 +181,6 @@ Page({
                 userInfo: e.detail.userInfo,
                 auth: true
             })
-            console.log(1, e.detail.userInfo)
-            //that.foo()
 
         } else {
             wx.showToast({
@@ -189,9 +190,8 @@ Page({
             });
         }
     },
-    foo: function() {
+    foo: function () {
         var that = this
-        console.log(2, that.data.inputValue)
         if (that.data.inputValue) {
             //留言内容不是空值
 
@@ -200,23 +200,23 @@ Page({
             var face = userInfo.avatarUrl;
             var words = that.data.inputValue;
             wx.request({
-                url: server,
+                url: api.chat_add,
                 data: {
-                    'c': 'send',
-                    'appid': appid,
+                    'openid': that.data.openid,
                     'nickname': name,
                     'face': face,
                     'words': words
                 },
                 header: {},
-                method: "GET",
+                method: "POST",
                 dataType: "json",
                 success: res => {
                     // console.log(res.data);
-                    if (res.data.success) {
+                    if (res.data.code == 0) {
+                        // console.log(3,res.data.chat_list)
                         that.setData({
-                            chatList: res.data.chatList,
-                            chatNum: res.data.chatNum
+                            chatList: res.data.chat_list,
+                            chatNum: res.data.chat_num
                         });
                         wx.showModal({
                             title: '提示',

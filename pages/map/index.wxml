@@ -20,5 +20,5 @@
     </view>
   </view>
   <view class='copyright' wx:if="{{mainInfo.she_tel}}">Made With ❤ By  {{mainInfo.he}} & {{mainInfo.she}}</view>
-  <view class='copyright'>©2018 WX.QIAKER.CN</view>
+  <view class='copyright'>©2019 SZP Inc.</view>
 </view>

@@ -2,14 +2,15 @@
 	"description": "项目配置文件。",
 	"setting": {
 		"urlCheck": false,
-		"es6": false,
+		"es6": true,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
-		"autoAudits": false
+		"autoAudits": false,
+		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.2",
+	"libVersion": "2.7.0",
 	"appid": "wx7facf6fca0a9d72e",
 	"projectname": "OnceLove",
 	"simulatorType": "wechat",

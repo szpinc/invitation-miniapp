@@ -3,9 +3,9 @@
     <view class="bless_img">
         <image src="/images/heart-animation.gif" />
     </view>
-    <view class="title" wx:if="{{zanNum == 0}}"> 点击下方按钮可送上祝福 </view>
+    <view class="title" wx:if="{{blessNum == 0}}"> 点击下方按钮可送上祝福 </view>
     <view class="friends">
-        <view class="face" wx:for="{{zanLog}}" wx:key="user">
+        <view class="face" wx:for="{{blessList}}" wx:key="user">
             <view class="avator">
                 <image src="{{item.face}}" />
             </view>
@@ -14,7 +14,7 @@
     </view>
 
     <view class='bless_bar'>
-        <view class="title " wx:if="{{zanNum > 0}}">已收到 {{zanNum}} 位好友送来的祝福</view>
+        <view class="title " wx:if="{{blessNum > 0}}">已收到 {{blessNum}} 位好友送来的祝福</view>
         <view class="btn_zone">
             <view class="zan fl" wx:if="{{userInfo.length > 0}}">
                 <button type="primary" class='zhufu' bindtap='zan'>送上祝福</button>

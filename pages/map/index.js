@@ -97,8 +97,8 @@ Page({
     var that = this;
     //console.log(that.data);
     return {
-      title: that.data.mainInfo.share,
-      imageUrl: that.data.mainInfo.thumb,
+      title: app.globalData.main_info.share,
+      imageUrl: app.globalData.main_info.thumb,
       path: 'pages/index/index',
       success: function(res) {
         wx.showToast({
@@ -115,12 +115,12 @@ Page({
   },
   callhe: function(event) {
     wx.makePhoneCall({
-      phoneNumber: this.globalData.main_info.he_tel
+      phoneNumber: this.data.mainInfo.he_tel
     })
   },
   callshe: function(event) {
     wx.makePhoneCall({
-      phoneNumber: this.globalData.main_info.she_tel
+      phoneNumber: this.data.mainInfo.she_tel
     })
   }
 })

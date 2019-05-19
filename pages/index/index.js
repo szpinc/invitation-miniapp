@@ -22,7 +22,9 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: function (options) {
+
+    var that = this;
 
     //创建动画
     var animation = wx.createAnimation({
@@ -39,8 +41,6 @@ Page({
       animationData: animation.export(),
     })
 
-    var that = this
-
     wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
       title: '加载中',
       icon: 'loading',
@@ -55,88 +55,87 @@ Page({
       header: {
         'Accept': 'application/json'
       },
-      success: function(res) {
+      success: function (res) {
         //console.log(res.data)
         wx.hideLoading();
         wx.playBackgroundAudio({
-          dataUrl: res.data.music_url,
+          dataUrl: res.data.main_info.music,
           title: '',
           coverImgUrl: ''
         })
 
         that.setData({
           mainInfo: res.data.main_info,
-          music_url: res.data.music_url
+          music_url: res.data.main_info.music
         });
-        
-        app.globalData.main_info = that.data.mainInfo;
 
-        console.log(app.globalData.main_info);
+        app.globalData.main_info = that.data.mainInfo;
+        app.globalData.music_url = that.data.mainInfo.music;
       }
     })
 
-    
-    
+
+
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function() {
+  onReady: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function() {
+  onShow: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function() {
+  onHide: function () {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function() {
+  onUnload: function () {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function() {
+  onPullDownRefresh: function () {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function() {
+  onReachBottom: function () {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function() {
+  onShareAppMessage: function () {
     var that = this;
     //console.log(that.data);
     return {
       title: that.data.mainInfo.share,
       imageUrl: that.data.mainInfo.thumb,
       path: 'pages/index/index',
-      success: function(res) {
+      success: function (res) {
         wx.showToast({
           title: '分享成功',
         })
       },
-      fail: function(res) {
+      fail: function (res) {
         // 转发失败
         wx.showToast({
           title: '分享取消',
@@ -144,17 +143,18 @@ Page({
       }
     }
   },
-  callhe: function(event) {
+  callhe: function (event) {
+    console.log(this.data.mainInfo.he_tel)
     wx.makePhoneCall({
       phoneNumber: this.data.mainInfo.he_tel
     })
   },
-  callshe: function(event) {
+  callshe: function (event) {
     wx.makePhoneCall({
       phoneNumber: this.data.mainInfo.she_tel
     })
   },
-  play: function(event) {
+  play: function (event) {
     if (this.data.isPlayingMusic) {
       wx.pauseBackgroundAudio();
       this.setData({
@@ -162,7 +162,7 @@ Page({
       })
     } else {
       wx.playBackgroundAudio({
-        dataUrl: this.data.music_url,
+        dataUrl: this.data.mainInfo.music,
         title: '',
         coverImgUrl: ''
       })

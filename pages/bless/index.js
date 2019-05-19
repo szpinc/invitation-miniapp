@@ -1,8 +1,7 @@
 // pages/bless/index.js
-
+const api = require('../../utils/api.js');
 const app = getApp()
-var server = app.globalData.server;
-var appid = app.globalData.appid;
+
 Page({
 
     /**
@@ -12,65 +11,56 @@ Page({
         userInfo: {},
         actionSheetHidden: true,
         painting: {},
-        shareImage: '',
-        qrcode: ''
+        // shareImage: mainInfo.shareImage,
+        // qrcode: mainInfo.qrcode,
+        openid: null
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
-    onLoad: function(options) {
+    onLoad: function (options) {
         var that = this
-
-
-        let userInfo = wx.getStorageSync('userInfo')
-        if (userInfo) {
-            this.setData({
-                userInfo: userInfo
-            })
-        }
-
-
-
+        let openid = wx.getStorageSync("openid")
+        that.setData({
+            openid: openid
+        });
         wx.showLoading({ //期间为了显示效果可以添加一个过度的弹出框提示“加载中”  
             title: '加载中',
             icon: 'loading',
         });
         wx.request({
-            url: server,
+            url: api.bless_list,
             method: 'GET',
             data: {
-                'c': 'info',
-                'appid': appid
+                'user_id': 1
             },
             header: {
                 'Accept': 'application/json'
             },
-            success: function(res) {
+            success: function (res) {
                 wx.hideLoading();
                 // console.log(res.data)
                 that.setData({
-                    mainInfo: res.data.mainInfo,
-                    zanLog: res.data.zanLog,
-                    zanNum: res.data.zanNum,
-                    slideList: res.data.slideList
+                    blessList: res.data.bless_list,
+                    blessNum: res.data.bless_num,
                 });
             }
         })
     },
-    openActionsheet: function() {
+    openActionsheet: function () {
         var self = this;
         self.setData({
             actionSheetHidden: !self.data.actionSheetHidden
         });
     },
-    listenerActionSheet: function() {
+    listenerActionSheet: function () {
         var self = this;
         self.setData({
             actionSheetHidden: !self.data.actionSheetHidden
         })
     },
-    createPoster: function() {
+    createPoster: function () {
 
         wx.navigateTo({
             url: '/pages/poster/index',
@@ -79,78 +69,59 @@ Page({
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
-    onReady: function() {
+    onReady: function () {
 
     },
 
     /**
      * 生命周期函数--监听页面显示
      */
-    onShow: function() {
+    onShow: function () {
 
     },
 
     /**
      * 生命周期函数--监听页面隐藏
      */
-    onHide: function() {
+    onHide: function () {
 
     },
 
     /**
      * 生命周期函数--监听页面卸载
      */
-    onUnload: function() {
+    onUnload: function () {
 
     },
 
     /**
      * 页面相关事件处理函数--监听用户下拉动作
      */
-    onPullDownRefresh: function() {
-        var that = this;
-        wx.request({
-            url: server,
-            method: 'GET',
-            data: {
-                'c': 'info',
-                'appid': appid
-            },
-            header: {
-                'Accept': 'application/json'
-            },
-            success: function(res) {
-                // console.log(res.data)
-                that.setData({
-                    zanLog: res.data.zanLog,
-                    zanNum: res.data.zanNum
-                });
-            }
-        })
+    onPullDownRefresh: function () {
     },
     /**
      * 页面上拉触底事件的处理函数
      */
-    onReachBottom: function() {
+    onReachBottom: function () {
 
     },
 
     /**
      * 用户点击右上角分享
      */
-    onShareAppMessage: function() {
+    onShareAppMessage: function () {
         var that = this;
         //console.log(that.data);
         return {
-            title: that.data.mainInfo.share,
-            imageUrl: that.data.mainInfo.thumb,
+            title: app.globalData.main_info.share,
+            imageUrl: app.globalData.main_info.thumb,
             path: 'pages/index/index',
-            success: function(res) {
+            success: function (res) {
                 wx.showToast({
                     title: '分享成功',
                 })
             },
-            fail: function(res) {
+            fail: function (res) {
                 // 转发失败
                 wx.showToast({
                     title: '分享取消',
@@ -158,11 +129,10 @@ Page({
             }
         }
     },
-    bindgetuserinfo: function(e) {
-        console.log(e.detail.userInfo)
+    bindgetuserinfo: function (e) {
+        // console.log(e.detail.userInfo)
         var that = this;
         if (e.detail.userInfo) {
-            wx.setStorageSync('userInfo', e.detail.userInfo)
             that.setData({
                 userInfo: e.detail.userInfo,
                 authBtn: false
@@ -171,30 +141,35 @@ Page({
             var userInfo = e.detail.userInfo;
             var name = userInfo.nickName;
             var face = userInfo.avatarUrl;
+            var openid = that.data.openid;
+
             wx.request({
-                url: server,
+                url: api.bless_add,
                 data: {
-                    'c': 'zan',
-                    'appid': appid,
                     'nickname': name,
-                    'face': face
+                    'face': face,
+                    'openid': openid
                 },
                 header: {},
-                method: "GET",
+                method: "POST",
                 dataType: "json",
                 success: res => {
-                    // console.log(res.data);
-                    if (res.data.success) {
 
-                        that.setData({
-                            zanLog: res.data.zanLog,
-                            zanNum: res.data.zanNum
-                        });
+                    var userBless = {
+                        'nickname': name,
+                        'face': face,
+                    }
+                    // console.log(res.data);
+                    if (res.data.code == 0) {
                         wx.showModal({
                             title: '提示',
                             content: res.data.msg,
                             showCancel: false
                         })
+                        that.data.blessList.push(userBless);
+                        this.setData({
+                            blessList: that.data.blessList
+                        });
                     } else {
                         wx.showModal({
                             title: '提示',
@@ -212,47 +187,5 @@ Page({
                 duration: 2000
             });
         }
-    },
-
-    zan: function(event) {
-        console.log(1, event)
-        var that = this;
-
-        var userInfo = that.data.userInfo;
-        var name = userInfo.nickName;
-        var face = userInfo.avatarUrl;
-        wx.request({
-            url: server,
-            data: {
-                'c': 'zan',
-                'appid': appid,
-                'nickname': name,
-                'face': face
-            },
-            header: {},
-            method: "GET",
-            dataType: "json",
-            success: res => {
-                // console.log(res.data);
-                if (res.data.success) {
-
-                    that.setData({
-                        zanLog: res.data.zanLog,
-                        zanNum: res.data.zanNum
-                    });
-                    wx.showModal({
-                        title: '提示',
-                        content: res.data.msg,
-                        showCancel: false
-                    })
-                } else {
-                    wx.showModal({
-                        title: '提示',
-                        content: res.data.msg,
-                        showCancel: false
-                    })
-                }
-            }
-        })
     },
 })
