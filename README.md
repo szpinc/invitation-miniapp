@@ -13,7 +13,5 @@
 
 ### 扫码体验：
 
-<img src="https://wx.qiaker.cn/img/ma.jpg">
-
-<img src="https://wx.qiaker.cn/img/ma2.jpg">
+![](https://ws1.sinaimg.cn/large/005LP3H3ly1g35bumstrej3076076t9s.jpg)
 
