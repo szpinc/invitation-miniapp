@@ -2,6 +2,7 @@
 ## 婚礼请柬小程序
 基于微信小程序做的一个婚礼请柬
 
+服务端源码: [https://github.com/szpinc/invitation-server](https://github.com/szpinc/invitation-server)
 ## 有哪些功能？
 
 * 相册展示
